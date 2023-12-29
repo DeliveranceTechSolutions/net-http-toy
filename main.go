@@ -54,7 +54,7 @@ func concurrency() {
 	go count(
 		ctx, 
 		&wg, 
-		odd, 
+		even, 
 		evenSeed,
 		start,
 		target, 
@@ -123,6 +123,7 @@ func main() {
 	}
 	defer s.Disconnect(ctx)
 
+	s = NewLoggingService(s)	
 	s.Subscribe(ctx)
 	for {
 		var msg string
