@@ -11,8 +11,6 @@ type LoggingService struct {
 	next Socket	
 }
 
-type Logger struct {}
-
 func (ls *LoggingService) Subscribe(ctx context.Context) (conn net.Conn, err error) {
 	defer func(start time.Time) {
 		log.Printf("Connection: %#v, Error: %#v", conn, err)	

@@ -9,7 +9,6 @@ import (
 	// "runtime"
 	"sync"
 	"time"
-	"reflect"
 
 	_ "net/http/pprof"
 )
@@ -114,17 +113,15 @@ func main() {
 	// Server for pprof
 	// http.HandleFunc("/concurrency", func(http.ResponseWriter, *http.Request) {	concurrency()	})
 	// fmt.Println(http.ListenAndServe("localhost:6060", nil))
-	sock := Socket{}
-	fmt.Println(reflect.TypeOf(sock))
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	s, err := NewSocketConn(SERVER_TYPE, SERVER_HOST, SERVER_PORT)
-	fmt.Println(reflect.TypeOf(s))
 	if err != nil {
 		fmt.Println(fmt.Errorf(err.Error()))
 		return
 	}
-	
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	defer s.Disconnect(ctx)
 
 	s.Subscribe(ctx)
 	for {
@@ -134,7 +131,6 @@ func main() {
 		if msg == "exit" {
 			break
 		}
-		fmt.Println("read input")
 
 		err = s.Publish(ctx, msg)
 		if err != nil {

@@ -15,9 +15,7 @@ type Interface interface {
 }
 	
 type Socket struct {
-	cancel context.CancelFunc
 	conn net.Conn
-	ctx context.Context
 	listener net.Listener
 }
 
@@ -44,7 +42,7 @@ func (s *Socket) Subscribe(ctx context.Context) (conn net.Conn, err error) {
 }
 
 func (s *Socket) Publish(ctx context.Context, msg string) (err error) {
-	_, err = os.Stdout.Write([]byte(msg))
+	_, err = os.Stdout.Write([]byte(msg + "\n"))
 	if err != nil {
 		fmt.Println(fmt.Errorf("error: Publish() - %s", err))
 	}	
@@ -53,8 +51,6 @@ func (s *Socket) Publish(ctx context.Context, msg string) (err error) {
 }
 
 func (s *Socket) Disconnect(ctx context.Context) (confirm string, err error){
-	defer s.cancel()
-
 	if err := s.listener.Close(); err != nil {
 		return "", err	
 	}
