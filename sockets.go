@@ -7,7 +7,7 @@ import (
 	"os"
 )	
 
-type Interface interface {
+type ISocket interface {
 	Subscribe(context.Context) (conn net.Conn, err error)
 	Publish(context.Context, string) (err error)
 	Disconnect(context.Context) (confirm string, err error)
@@ -19,7 +19,7 @@ type Socket struct {
 	listener net.Listener
 }
 
-func NewSocketConn(prot, host, port string) (Interface, error) {
+func NewSocketConn(prot, host, port string) (ISocket, error) {
 	listener, err := net.Listen(prot, host + ":" + port)
 	if err != nil {
 		return nil, fmt.Errorf(err.Error())

@@ -5,13 +5,19 @@ import (
 	"log"
 	"net"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-type LoggingService struct {
-	next Interface
+type ILogger interface {
+	ISocket | IClient | IServer
 }
 
-// Publish implements Interface.
+type LoggingService struct {
+	next 
+}
+
+// Publish implements ISocket.
 func (ls *LoggingService) Publish(ctx context.Context, msg string) (err error) {
 	defer func(start time.Time) {
 		log.Printf("%s Error: %#v", msg, err)
@@ -20,14 +26,14 @@ func (ls *LoggingService) Publish(ctx context.Context, msg string) (err error) {
 	return ls.next.Publish(ctx, msg)
 }
 
-// Retry implements Interface.
+// Retry implements ISocket.
 func (*LoggingService) Retry(context.Context) {
 	panic("unimplemented")
 }
 
-func NewLoggingService(i Interface) *LoggingService {
+func NewLoggingService(i) *LoggingService {
 	return &LoggingService{
-		next: i,
+		next: t,
 	}
 }
 
@@ -45,4 +51,12 @@ func (ls *LoggingService) Disconnect(ctx context.Context) (confirm string, err e
 	}(time.Now())
 
 	return ls.next.Disconnect(ctx)
+}
+
+func (ls *LoggingService) RequestedClientConnection(requester, recipient uuid.UUID) (success bool, err error) {
+	defer func(start time.Time) {
+		log.Printf("%s Error: %#v", requester, recipient, success, err)
+	}(time.Now())
+
+	return ls.next.RequestedClientConnection(requester, recipient)
 }

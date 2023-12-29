@@ -135,7 +135,7 @@ func main() {
 
 		err = s.Publish(ctx, msg)
 		if err != nil {
-			log.Println(fmt.Errorf("Error: Couldn't publish message to subscriber %s", err.Error()))
+			log.Println(fmt.Errorf("error: Couldn't publish message to subscriber %s", err.Error()))
 		}
 	}
 
