@@ -1,0 +1,35 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.so
+
+# Compiled Go binary
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Generated files
+*.test
+*.prof
+*.out
+*.crt
+*.key
+
+# Ignore vendor directory
+/vendor/
+
+# Ignore go.sum file
+go.sum
+
+# Ignore IDE-specific directories and files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Ignore OS-specific files
+Thumbs.db
+.DS_Store
+
