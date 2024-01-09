@@ -4,7 +4,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	//"log"
 //	"net/http"
 	// "runtime"
 	"sync"
@@ -102,9 +102,12 @@ type Message struct {
 }
 
 const (
-        SERVER_HOST = "localhost"
-        SERVER_PORT = "9988"
-        SERVER_TYPE = "tcp"
+        SERVER_HOST_A = "localhost"
+        SERVER_PORT_A = "9988"
+        SERVER_TYPE_A = "tcp"
+	SERVER_HOST_B = "localhost"
+        SERVER_PORT_B = "9987"
+        SERVER_TYPE_B = "tcp"
 )
 
 func main() {
@@ -113,30 +116,31 @@ func main() {
 	// Server for pprof
 	// http.HandleFunc("/concurrency", func(http.ResponseWriter, *http.Request) {	concurrency()	})
 	// fmt.Println(http.ListenAndServe("localhost:6060", nil))
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+//	ctx, cancel := context.WithCancel(context.Background())
+//	defer cancel()
+//
+//	s, err := NewSocketConn(SERVER_TYPE_A, SERVER_HOST_A, SERVER_PORT_A)
+//	if err != nil {
+//		fmt.Println(fmt.Errorf(err.Error()))
+//		return
+//	}
+//	defer s.Disconnect(ctx)
+//
+//	s.Subscribe(ctx)
+//	for {
+//		var msg string
+//		fmt.Scanln(&msg)
+//
+//		if msg == "exit" {
+//			break
+//		}
+//
+//		err = s.Publish(ctx, msg)
+//		if err != nil {
+//			log.Println(fmt.Errorf("Error: Couldn't publish message to subscriber %s", err.Error()))
+//		}
+//	}
 
-	s, err := NewSocketConn(SERVER_TYPE, SERVER_HOST, SERVER_PORT)
-	if err != nil {
-		fmt.Println(fmt.Errorf(err.Error()))
-		return
-	}
-	defer s.Disconnect(ctx)
-
-	s.Subscribe(ctx)
-	for {
-		var msg string
-		fmt.Scanln(&msg)
-
-		if msg == "exit" {
-			break
-		}
-
-		err = s.Publish(ctx, msg)
-		if err != nil {
-			log.Println(fmt.Errorf("Error: Couldn't publish message to subscriber %s", err.Error()))
-		}
-	}
-
+	NewCoreServer().Start()
 	return
 }

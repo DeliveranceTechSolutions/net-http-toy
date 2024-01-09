@@ -7,8 +7,8 @@ import (
 	"os"
 )	
 
-type Interface interface {
-	Subscribe(context.Context) (conn net.Conn, err error)
+type ISocket interface {
+	Subscribe(context.Context,string) (conn net.Conn, err error)
 	Publish(context.Context, string) (err error)
 	Disconnect(context.Context) (confirm string, err error)
 	Retry(context.Context) 	
@@ -19,12 +19,7 @@ type Socket struct {
 	listener net.Listener
 }
 
-func NewSocketConn(prot, host, port string) (Interface, error) {
-	listener, err := net.Listen(prot, host + ":" + port)
-	if err != nil {
-		return nil, fmt.Errorf(err.Error())
-	}
-
+func NewSocketConn(prot, host, port string) (ISocket, error) {
 	conn, err := net.Dial(prot, host + ":" + port)
 	if err != nil {
 		return nil, fmt.Errorf(err.Error())
@@ -32,13 +27,17 @@ func NewSocketConn(prot, host, port string) (Interface, error) {
 	
 	return &Socket{
 		conn: conn,
-		listener: listener,
-
 	}, nil
 }
 
-func (s *Socket) Subscribe(ctx context.Context) (conn net.Conn, err error) {
-	return s.listener.Accept()
+func (s *Socket) Subscribe(ctx context.Context, target string) (conn net.Conn, err error) {
+	listener, err := net.Listen("tcp", target)
+	if err != nil {
+		return nil, fmt.Errorf(err.Error())
+	}
+
+	newlistener, err := listener.Accept()
+	return newlistener, nil
 }
 
 func (s *Socket) Publish(ctx context.Context, msg string) (err error) {

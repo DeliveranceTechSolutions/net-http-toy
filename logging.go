@@ -7,22 +7,31 @@ import (
 	"time"
 )
 
-type LoggingService struct {
-	next Socket	
+// Any new interfaces will be embedded into ILogger
+type ILogger interface {
+	IClient
+	IServer
+	ISocket
 }
 
-func (ls *LoggingService) Subscribe(ctx context.Context) (conn net.Conn, err error) {
+type LoggingService struct {
+	next ILogger
+}
+
+// use a descriptive name for each individual LogginService, to identify the "base" type
+func (socket *LoggingService) Subscribe(ctx context.Context, target string) (conn net.Conn, err error) {
 	defer func(start time.Time) {
 		log.Printf("Connection: %#v, Error: %#v", conn, err)	
 	}(time.Now())
 		
-	return ls.next.Subscribe(ctx)
+	return socket.next.Subscribe(ctx, target)
 }
 
-func (ls *LoggingService) Disconnect(ctx context.Context) (confirm string, err error) {
+// it could be lowercase, whatever seems right to yourself
+func (socket *LoggingService) Disconnect(ctx context.Context) (confirm string, err error) {
 	defer func(start time.Time) {
 		log.Printf("%s Error: %#v", confirm, err)
 	}(time.Now())
 	
-	return ls.next.Disconnect(ctx)
+	return socket.next.Disconnect(ctx)
 }
